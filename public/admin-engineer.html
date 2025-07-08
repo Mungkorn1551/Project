@@ -1,34 +1,52 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
-  <meta charset="UTF-8">
-  <title>คำร้อง กองช่าง</title>
+  <meta charset="UTF-8" />
+  <title>📋 รายการคำร้อง - กองช่าง</title>
+  <style>
+    body { font-family: 'Kanit', sans-serif; background: #f1f5f9; margin: 0; padding: 20px; }
+    h2 { text-align: center; margin-bottom: 20px; }
+    table { width: 100%; border-collapse: collapse; background: white; box-shadow: 0 0 8px rgba(0,0,0,0.1); }
+    th, td { padding: 10px; border: 1px solid #ddd; text-align: center; vertical-align: middle; }
+    th { background: #15563b; color: white; }
+    img, video { max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+    video.rotated-180 { transform: rotate(180deg); }
+    .media-container { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+    a.map-link { color: #2563eb; font-weight: bold; text-decoration: none; }
+  </style>
 </head>
 <body>
-  <h2>คำร้อง กองช่าง</h2>
-  <table border="1">
+  <h2>📋 รายการคำร้อง - กองช่าง</h2>
+  <table>
     <thead>
-      <tr>
-        <th>ID</th><th>ชื่อ</th><th>ข้อความ</th><th>สถานะ</th>
-      </tr>
+      <tr><th>ชื่อ</th><th>เบอร์</th><th>ข้อความ</th><th>ไฟล์</th><th>แผนก</th><th>สถานะ</th><th>แผนที่</th></tr>
     </thead>
-    <tbody id="table-body"></tbody>
+    <tbody id="data-body"></tbody>
   </table>
-
   <script>
-    fetch('/data-department/กองช่าง')
-      .then(res => res.json())
-      .then(data => {
-        const tbody = document.getElementById('table-body');
-        tbody.innerHTML = data.map(r => `
-          <tr>
-            <td>${r.id}</td>
-            <td>${r.name}</td>
-            <td>${r.message}</td>
-            <td>${r.status}</td>
-          </tr>
-        `).join('');
+    async function loadData() {
+      const res = await fetch('/data-engineer-all?_=' + Date.now());
+      const data = await res.json();
+      const tbody = document.getElementById('data-body');
+      tbody.innerHTML = '';
+      data.forEach(row => {
+        let files = [];
+        try { files = row.photo ? JSON.parse(row.photo) : []; } catch (e) { console.error('JSON parse error', e); }
+        const fileLinks = `<div class="media-container">` + files.map(file => {
+          const url = typeof file === 'string' ? file : (file.url || '');
+          const type = file.type || '';
+          if (!url) return '';
+          if (type === 'video') {
+            return `<video controls class="rotated-180"><source src="${url}" type="video/mp4">วิดีโอนี้ไม่สามารถเล่นได้</video>`;
+          } else {
+            return `<img src="${url}" alt="ไฟล์">`;
+          }
+        }).join('') + `</div>`;
+        const mapLink = row.latitude && row.longitude ? `<a class="map-link" href="https://www.google.com/maps?q=${row.latitude},${row.longitude}" target="_blank">📍 แผนที่</a>` : '-';
+        tbody.innerHTML += `<tr><td>${row.name || '-'}</td><td>${row.phone || '-'}</td><td>${row.message || '-'}</td><td>${fileLinks || '-'}</td><td>${row.department || '-'}</td><td>${row.status || '-'}</td><td>${mapLink}</td></tr>`;
       });
+    }
+    loadData();
   </script>
 </body>
 </html>

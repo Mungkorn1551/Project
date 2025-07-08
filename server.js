@@ -286,6 +286,48 @@ app.post('/disapprove/:id', (req, res) => {
     res.sendStatus(200);
   });
 });
+app.get('/data-engineer-all', (req, res) => {
+  db.query('SELECT * FROM requests WHERE department = ? ORDER BY id DESC', ['กองช่าง'], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    res.json(results);
+  });
+});
+
+app.get('/data-health-all', (req, res) => {
+  db.query('SELECT * FROM requests WHERE department = ? ORDER BY id DESC', ['สาธารณสุข'], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    res.json(results);
+  });
+});
+
+app.get('/data-electric-all', (req, res) => {
+  db.query('SELECT * FROM requests WHERE department = ? ORDER BY id DESC', ['ไฟฟ้า'], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    res.json(results);
+  });
+});
+
+app.get('/data-other-all', (req, res) => {
+  db.query('SELECT * FROM requests WHERE department = ? ORDER BY id DESC', ['อื่นๆ'], (err, results) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    res.json(results);
+  });
+});
+app.get('/data-approved-all', (req, res) => {
+  const sql = 'SELECT * FROM requests WHERE approved = 1 ORDER BY id DESC';
+  db.query(sql, (err, results) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    res.json(results);
+  });
+});
+app.get('/approved-all', (req, res) => {
+  if (req.session.loggedIn) {
+    res.sendFile(path.join(__dirname, 'public', 'approved-all.html'));
+  } else {
+    res.redirect('/admin-login');
+  }
+});
+
 
 app.get('/data-sp-all', (req, res) => {
   db.query(
@@ -297,6 +339,7 @@ app.get('/data-sp-all', (req, res) => {
     }
   );
 });
+
 
 app.use((req, res) => {
   res.status(404).send('ไม่พบหน้าเว็บที่คุณเรียก');
