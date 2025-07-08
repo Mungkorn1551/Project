@@ -8,6 +8,7 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 const session = require('express-session');
 const path = require('path');
 const { v4: uuidv4 } = require('uuid');
+const nodemailer = require('nodemailer');
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -54,6 +55,30 @@ db.connect((err) => {
     console.log('✅ เชื่อมต่อ MySQL สำเร็จ');
   }
 });
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
+  }
+});
+
+const sendEmail = (subject, body) => {
+  const mailOptions = {
+    from: process.env.EMAIL_USER,
+    to: process.env.EMAIL_RECEIVER,
+    subject: subject,
+    text: body
+  };
+
+  transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.error('❌ ส่งอีเมลไม่สำเร็จ:', error.message);
+    } else {
+      console.log('✅ ส่งอีเมลสำเร็จ:', info.response);
+    }
+  });
+};
 
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD;
 
@@ -124,6 +149,12 @@ app.post('/submit', upload.array('mediaFiles'), async (req, res) => {
         return res.status(500).send('❌ บันทึกไม่สำเร็จ');
       }
 
+      // ✅ เพิ่มตรงนี้: ส่งอีเมลแจ้งเตือน
+      sendEmail(
+        '📬 แจ้งเตือนคำร้องใหม่',
+        `ชื่อ: ${name}\nเบอร์โทร: ${phone}\nที่อยู่: ${address}\nข้อความ: ${message}`
+      );
+
       console.log('✅ บันทึกคำร้อง:', JSON.stringify(result, null, 2));
       return res.send(`
         <h2>✅ ส่งคำร้องสำเร็จ</h2>
@@ -131,6 +162,7 @@ app.post('/submit', upload.array('mediaFiles'), async (req, res) => {
         <p><a href="/">🔙 กลับหน้าหลัก</a></p>
       `);
     });
+
 
   } catch (error) {
     console.error('💥 เกิดข้อผิดพลาดไม่คาดคิด:', error);
