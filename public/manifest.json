@@ -1,0 +1,20 @@
+{
+  "name": "ระบบจัดการคำร้อง - สำนักปลัด",
+  "short_name": "Admin-SP",
+  "start_url": "/admin-sp",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#15563b",
+  "icons": [
+    {
+      "src": "/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/obtc-logo-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

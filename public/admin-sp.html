@@ -1,9 +1,13 @@
 <!DOCTYPE html>
 <html lang="th">
 <head>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#15563b" />
+
   <meta charset="UTF-8" />
   <title>📋 รายการคำร้อง - สำนักงานปลัด</title>
   <style>
+    
     body {
       font-family: 'Kanit', sans-serif;
       background: #f1f5f9;
@@ -120,6 +124,12 @@
       });
     }
     loadData();
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(() => console.log("✅ Service Worker registered"))
+        .catch(err => console.error("❌ Service Worker failed", err));
+    }
   </script>
+
 </body>
 </html>
