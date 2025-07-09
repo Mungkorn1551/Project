@@ -107,7 +107,26 @@ app.get('/admin', (req, res) => {
     res.redirect('/admin-login');
   }
 });
+// 🆕 เพิ่มระบบล็อกอินเฉพาะ admin-sp
+app.get('/admin-sp-login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-sp-login.html'));
+});
 
+app.post('/admin-sp-login', (req, res) => {
+  const { password } = req.body;
+  if (password === process.env.ADMIN_SP_PASSWORD) {
+    req.session.isSpLoggedIn = true;
+    return res.redirect('/admin-sp');
+  }
+  res.send('<script>alert("รหัสผ่านไม่ถูกต้อง"); window.location="/admin-sp-login";</script>');
+});
+
+app.use('/admin-sp', (req, res, next) => {
+  if (!req.session.isSpLoggedIn) {
+    return res.redirect('/admin-sp-login');
+  }
+  next();
+});
 app.post('/submit', upload.array('mediaFiles'), async (req, res) => {
   try {
     console.log('📨 รับข้อมูลใหม่:', JSON.stringify(req.body, null, 2));
@@ -213,12 +232,13 @@ app.get('/processed', (req, res) => {
 });
 
 app.get('/admin-sp', (req, res) => {
-  if (req.session.loggedIn) {
+  if (req.session.isSpLoggedIn) {
     res.sendFile(path.join(__dirname, 'public', 'admin-sp.html'));
   } else {
-    res.redirect('/admin-login');
+    res.redirect('/admin-sp-login');
   }
 });
+
 
 app.get('/admin-health', (req, res) => {
   if (req.session.loggedIn) {
