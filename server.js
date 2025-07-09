@@ -120,6 +120,69 @@ app.post('/admin-sp-login', (req, res) => {
   }
   res.send('<script>alert("รหัสผ่านไม่ถูกต้อง"); window.location="/admin-sp-login";</script>');
 });
+// 🔒 Admin Health Login
+app.get('/admin-health-login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-health-login.html'));
+});
+app.post('/admin-health-login', (req, res) => {
+  if (req.body.password === process.env.ADMIN_HEALTH_PASSWORD) {
+    req.session.isHealthLoggedIn = true;
+    return res.redirect('/admin-health');
+  }
+  res.send('<script>alert("รหัสผ่านไม่ถูกต้อง"); window.location="/admin-health-login";</script>');
+});
+app.use('/admin-health', (req, res, next) => {
+  if (!req.session.isHealthLoggedIn) return res.redirect('/admin-health-login');
+  next();
+});
+
+// 🔒 Admin Engineer Login
+app.get('/admin-engineer-login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-engineer-login.html'));
+});
+app.post('/admin-engineer-login', (req, res) => {
+  if (req.body.password === process.env.ADMIN_ENGINEER_PASSWORD) {
+    req.session.isEngineerLoggedIn = true;
+    return res.redirect('/admin-engineer');
+  }
+  res.send('<script>alert("รหัสผ่านไม่ถูกต้อง"); window.location="/admin-engineer-login";</script>');
+});
+app.use('/admin-engineer', (req, res, next) => {
+  if (!req.session.isEngineerLoggedIn) return res.redirect('/admin-engineer-login');
+  next();
+});
+
+// 🔒 Admin Electric Login
+app.get('/admin-electric-login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-electric-login.html'));
+});
+app.post('/admin-electric-login', (req, res) => {
+  if (req.body.password === process.env.ADMIN_ELECTRIC_PASSWORD) {
+    req.session.isElectricLoggedIn = true;
+    return res.redirect('/admin-electric');
+  }
+  res.send('<script>alert("รหัสผ่านไม่ถูกต้อง"); window.location="/admin-electric-login";</script>');
+});
+app.use('/admin-electric', (req, res, next) => {
+  if (!req.session.isElectricLoggedIn) return res.redirect('/admin-electric-login');
+  next();
+});
+
+// 🔒 Admin Other Login
+app.get('/admin-other-login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'admin-other-login.html'));
+});
+app.post('/admin-other-login', (req, res) => {
+  if (req.body.password === process.env.ADMIN_OTHER_PASSWORD) {
+    req.session.isOtherLoggedIn = true;
+    return res.redirect('/admin-other');
+  }
+  res.send('<script>alert("รหัสผ่านไม่ถูกต้อง"); window.location="/admin-other-login";</script>');
+});
+app.use('/admin-other', (req, res, next) => {
+  if (!req.session.isOtherLoggedIn) return res.redirect('/admin-other-login');
+  next();
+});
 
 app.use('/admin-sp', (req, res, next) => {
   if (!req.session.isSpLoggedIn) {
@@ -241,36 +304,37 @@ app.get('/admin-sp', (req, res) => {
 
 
 app.get('/admin-health', (req, res) => {
-  if (req.session.loggedIn) {
+  if (req.session.isHealthLoggedIn) {
     res.sendFile(path.join(__dirname, 'public', 'admin-health.html'));
   } else {
-    res.redirect('/admin-login');
+    res.redirect('/admin-health-login');
   }
 });
 
 app.get('/admin-engineer', (req, res) => {
-  if (req.session.loggedIn) {
+  if (req.session.isEngineerLoggedIn) {
     res.sendFile(path.join(__dirname, 'public', 'admin-engineer.html'));
   } else {
-    res.redirect('/admin-login');
+    res.redirect('/admin-engineer-login');
   }
 });
 
 app.get('/admin-electric', (req, res) => {
-  if (req.session.loggedIn) {
+  if (req.session.isElectricLoggedIn) {
     res.sendFile(path.join(__dirname, 'public', 'admin-electric.html'));
   } else {
-    res.redirect('/admin-login');
+    res.redirect('/admin-electric-login');
   }
 });
 
 app.get('/admin-other', (req, res) => {
-  if (req.session.loggedIn) {
+  if (req.session.isOtherLoggedIn) {
     res.sendFile(path.join(__dirname, 'public', 'admin-other.html'));
   } else {
-    res.redirect('/admin-login');
+    res.redirect('/admin-other-login');
   }
 });
+
 
 app.get('/data-processed', (req, res) => {
   const department = req.query.department;

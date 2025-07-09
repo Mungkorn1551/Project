@@ -1,0 +1,16 @@
+{
+  "name": "ระบบจัดการคำร้อง – กองสาธารณสุข",
+  "short_name": "Admin-Health",
+  "start_url": "/admin-health",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#15563b",
+  "icons": [
+    
+    {
+      "src": "/icons/icon-health-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
