@@ -1,7 +1,7 @@
 {
   "name": "ระบบแจ้งคำร้อง - ไฟฟ้า",
-  "short_name": "แจ้งไฟฟ้า",
-  "start_url": "/admin-electric.html",
+  "short_name": "Admin-electric",
+  "start_url": "/admin-electric.",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#155263",
