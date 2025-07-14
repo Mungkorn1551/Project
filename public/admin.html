@@ -184,24 +184,23 @@
         files = [];
       }
 
-     const fileLinks = files.map(file => {
-        const fileUrl = typeof file === 'string' ? file : (file.url || "");
-        const fileType = file.type || "";
+      let fileLinks = "-";
+      if (files.length > 0) {
+        const first = files[0];
+        const firstUrl = typeof first === 'string' ? first : first.url;
+        const firstType = first.type || "";
 
-        if (!fileUrl) {
-          return '';  // ข้ามถ้าไม่มี url
-        }
+        const firstElement = firstType === 'video'
+          ? `<video controls style="max-width: 100px;"><source src="${firstUrl}" type="video/mp4"></video>`
+          : `<img src="${firstUrl}" style="max-width: 100px; border-radius: 8px;" />`;
 
-        if (fileType === 'image') {
-          return `<img src="${fileUrl}" alt="ไฟล์" width="100">`;
-        } else if (fileType === 'video') {
-          return `<video controls><source src="${fileUrl}" type="video/mp4"></video>`;
-        } else if (fileUrl.toLowerCase().match(/\.(mp4|mov|avi)(\?|$)/)) {
-          return `<video controls><source src="${fileUrl}" type="video/mp4"></video>`;
-        } else {
-          return `<img src="${fileUrl}" alt="ไฟล์" width="100">`;
-        }
-      }).join('<br>');
+        const buttonHtml = files.length > 1
+          ? `<br><button onclick='showImages(${JSON.stringify(files)})'>ดูทั้งหมด</button>`
+          : "";
+
+        fileLinks = firstElement + buttonHtml;
+      }
+
 
 
 
@@ -272,6 +271,23 @@
   }
 
   loadData();
+
+</script>
+<script>
+function showImages(images) {
+  const html = images.map(img => {
+    const url = typeof img === 'string' ? img : img.url;
+    const type = img.type || "";
+
+    if (type === 'video' || url.toLowerCase().match(/\.(mp4|mov|avi)(\?|$)/)) {
+      return `<video controls style="max-width:100%; margin-bottom:10px;"><source src="${url}" type="video/mp4"></video>`;
+    }
+    return `<img src="${url}" style="max-width:100%; margin-bottom:10px; border-radius: 8px;" />`;
+  }).join('');
+
+  const win = window.open('', '_blank', 'width=800,height=600');
+  win.document.write(`<body style="font-family:kanit;padding:20px">${html}</body>`);
+}
 </script>
 
 
