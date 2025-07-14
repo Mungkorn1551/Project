@@ -1,7 +1,7 @@
 {
   "name": "ระบบจัดการคำร้อง – แผนกอื่นๆ",
   "short_name": "Admin-Other",
-  "start_url": "/admin-other",
+  "start_url": "/admin-other-login",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#15563b",
