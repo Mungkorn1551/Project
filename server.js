@@ -238,11 +238,9 @@ app.post('/submit', upload.array('mediaFiles'), async (req, res) => {
       );
 
       console.log('✅ บันทึกคำร้อง:', JSON.stringify(result, null, 2));
-      return res.send(`
-        <h2>✅ ส่งคำร้องสำเร็จ</h2>
-        <p>ขอบคุณ ${name}</p>
-        <p><a href="/">🔙 กลับหน้าหลัก</a></p>
-      `);
+      return res.redirect('/submit-success.html');
+
+        
     });
 
 
