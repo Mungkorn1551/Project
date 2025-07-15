@@ -152,7 +152,7 @@
           <th>ข้อความ</th>
           <th>ไฟล์</th>
           <th>แผนก</th>
-          <th>สถานะ</th>
+         
           <th>แผนที่</th>
           <th>จัดการ</th>
         </tr>
@@ -214,7 +214,7 @@
         <td>${row.message || "-"}</td>
         <td>${fileLinks || "-"}</td>
         <td>${row.department || "-"}</td>
-        <td class="status ${row.status}">${statusText}</td>
+       
         <td>${mapLink}</td>
         <td>
           <button class="btn approve" onclick="approve(${row.id})" ${!isDeptSelected ? 'disabled' : ''}>✅ อนุมัติ</button><br>
