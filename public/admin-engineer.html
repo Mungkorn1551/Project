@@ -52,6 +52,7 @@
         const mapLink = row.latitude && row.longitude ? `<a class="map-link" href="https://www.google.com/maps?q=${row.latitude},${row.longitude}" target="_blank">📍 แผนที่</a>` : '-';
         const statusSelect = `
           <select onchange="setStatus(${row.id}, this.value)">
+            <option value="" disabled ${(row.status === null || row.status === undefined || row.status === '') ? 'selected' : ''}>โปรดเลือกสถานะ</option>
             <option value="รอดำเนินการ" ${row.status === 'รอดำเนินการ' ? 'selected' : ''}>รอดำเนินการ</option>
             <option value="กำลังดำเนินการ" ${row.status === 'กำลังดำเนินการ' ? 'selected' : ''}>กำลังดำเนินการ</option>
             <option value="เสร็จสิ้น" ${row.status === 'เสร็จสิ้น' ? 'selected' : ''}>เสร็จสิ้น</option>
