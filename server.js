@@ -400,6 +400,31 @@ app.post('/disapprove/:id', (req, res) => {
     res.sendStatus(200);
   });
 });
+// ✅ เพิ่มฟังก์ชันเปลี่ยนสถานะ
+app.post('/set-status/:id', (req, res) => {
+  const id = req.params.id;
+  const { status } = req.body;
+
+  if (!status) {
+    return res.status(400).json({ error: '❌ ต้องระบุสถานะ' });
+  }
+
+  db.query('UPDATE requests SET status = ? WHERE id = ?', [status, id], (err, result) => {
+    if (err) {
+      console.error('❌ เปลี่ยนสถานะไม่สำเร็จ:', err);
+      return res.status(500).json({ error: '❌ เกิดข้อผิดพลาดในฐานข้อมูล' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: '❌ ไม่พบคำร้องนี้' });
+    }
+
+    console.log(`✅ อัปเดตสถานะคำร้อง id=${id} -> ${status}`);
+    res.json({ message: '✅ เปลี่ยนสถานะสำเร็จ' });
+  });
+});
+
+
 app.get('/data-engineer-all', (req, res) => {
   db.query('SELECT * FROM requests WHERE department = ? ORDER BY id DESC', ['กองช่าง'], (err, results) => {
     if (err) return res.status(500).json({ error: 'Database error' });

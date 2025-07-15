@@ -53,7 +53,25 @@
         }
 
         const mapLink = row.latitude && row.longitude ? `<a class="map-link" href="https://www.google.com/maps?q=${row.latitude},${row.longitude}" target="_blank">📍 แผนที่</a>` : '-';
-        tbody.innerHTML += `<tr><td>${row.name || '-'}</td><td>${row.phone || '-'}</td><td>${row.message || '-'}</td><td>${fileLinks || '-'}</td><td>${row.department || '-'}</td><td>${row.status || '-'}</td><td>${mapLink}</td></tr>`;
+        const statusSelect = `
+          <select onchange="setStatus(${row.id}, this.value)">
+            <option value="รอดำเนินการ" ${row.status === 'รอดำเนินการ' ? 'selected' : ''}>รอดำเนินการ</option>
+            <option value="กำลังดำเนินการ" ${row.status === 'กำลังดำเนินการ' ? 'selected' : ''}>กำลังดำเนินการ</option>
+            <option value="เสร็จสิ้น" ${row.status === 'เสร็จสิ้น' ? 'selected' : ''}>เสร็จสิ้น</option>
+          </select>
+        `;
+
+        tbody.innerHTML += `
+          <tr>
+            <td>${row.name || '-'}</td>
+            <td>${row.phone || '-'}</td>
+            <td>${row.message || '-'}</td>
+            <td>${fileLinks || '-'}</td>
+            <td>${row.department || '-'}</td>
+            <td>${statusSelect}</td>
+            <td>${mapLink}</td>
+          </tr>
+        `;
       });
     }
     loadData();
@@ -79,6 +97,23 @@
     const win = window.open('', '_blank', 'width=800,height=600');
     win.document.write(`<body style="font-family:kanit;padding:20px">${html}</body>`);
   }
+  </script>
+  <script>
+    function setStatus(id, status) {
+      fetch(`/set-status/${id}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ status })
+      }).then(res => {
+        if (res.ok) {
+          alert("อัปเดตสถานะเรียบร้อย");
+        } else {
+          alert("เกิดข้อผิดพลาดในการอัปเดต");
+        }
+      });
+    }
   </script>
 
 

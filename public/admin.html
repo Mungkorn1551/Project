@@ -218,7 +218,8 @@
         <td>${mapLink}</td>
         <td>
           <button class="btn approve" onclick="approve(${row.id})" ${!isDeptSelected ? 'disabled' : ''}>✅ อนุมัติ</button><br>
-          <button class="btn reject" onclick="reject(${row.id})" ${!isDeptSelected ? 'disabled' : ''}>❌ ไม่อนุมัติ</button><br>
+          <button class="btn reject" onclick="reject(${row.id})">❌ ไม่อนุมัติ</button><br>
+
           <select onchange="setDept(${row.id}, this.value)">
             <option value="">เลือกแผนก</option>
             <option value="สำนักงานปลัด" ${row.department === 'สำนักงานปลัด' ? 'selected' : ''}>สำนักงานปลัด</option>
@@ -227,10 +228,7 @@
             <option value="ไฟฟ้า" ${row.department === 'ไฟฟ้า' ? 'selected' : ''}>ไฟฟ้า</option>
             <option value="อื่นๆ" ${row.department === 'อื่นๆ' ? 'selected' : ''}>อื่นๆ</option>
           </select><br>
-          <select onchange="setStatus(${row.id}, this.value)">
-            <option ${row.status === 'รอตรวจสอบ' ? 'selected' : ''}>รอตรวจสอบ</option>
-            <option ${row.status === 'เสร็จสิ้น' ? 'selected' : ''}>เสร็จสิ้น</option>
-          </select>
+    
         </td>
       `;
       tbody.appendChild(tr);
