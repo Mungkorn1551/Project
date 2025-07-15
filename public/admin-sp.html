@@ -89,22 +89,23 @@
           console.error('JSON parse error', e);
         }
 
-        const fileLinks = `<div class="media-container">` + files.map(file => {
-          const url = typeof file === 'string' ? file : (file.url || '');
-          const type = file.type || '';
-          if (!url) return '';
+        let fileLinks = "-";
+        if (files.length > 0) {
+          const first = files[0];
+          const firstUrl = typeof first === 'string' ? first : first.url;
+          const firstType = first.type || "";
 
-          // ตัวอย่าง: ถ้าต้องการให้หมุนวิดีโอทุกไฟล์ (หรือปรับตามเงื่อนไขของคุณ)
-          if (type === 'video') {
-            return `<video controls class="rotated-180">
-                      <source src="${url}" type="video/mp4">วิดีโอนี้ไม่สามารถเล่นได้
-                    </video>`;
-          } else if (type === 'image') {
-            return `<img src="${url}" alt="ไฟล์">`;
-          } else {
-            return `<img src="${url}" alt="ไฟล์">`;
-          }
-        }).join('') + `</div>`;
+          const firstElement = firstType === 'video'
+            ? `<video controls style="max-width: 100px;"><source src="${firstUrl}" type="video/mp4"></video>`
+            : `<img src="${firstUrl}" style="max-width: 100px; border-radius: 8px;" />`;
+
+          const buttonHtml = files.length > 1
+            ? `<br><button onclick='showImages(${JSON.stringify(files)})'>ดูทั้งหมด</button>`
+            : "";
+
+          fileLinks = `<div class="media-container">${firstElement}${buttonHtml}</div>`;
+        }
+
 
         const mapLink = row.latitude && row.longitude
           ? `<a class="map-link" href="https://www.google.com/maps?q=${row.latitude},${row.longitude}" target="_blank">📍 แผนที่</a>`
@@ -129,6 +130,22 @@
         .then(() => console.log("✅ Service Worker registered"))
         .catch(err => console.error("❌ Service Worker failed", err));
     }
+  </script>
+  <script>
+  function showImages(images) {
+    const html = images.map(img => {
+      const url = typeof img === 'string' ? img : img.url;
+      const type = img.type || "";
+
+      if (type === 'video' || url.toLowerCase().match(/\.(mp4|mov|avi)(\?|$)/)) {
+        return `<video controls style="max-width:100%; margin-bottom:10px;"><source src="${url}" type="video/mp4"></video>`;
+      }
+      return `<img src="${url}" style="max-width:100%; margin-bottom:10px; border-radius: 8px;" />`;
+    }).join('');
+
+    const win = window.open('', '_blank', 'width=800,height=600');
+    win.document.write(`<body style="font-family:kanit;padding:20px">${html}</body>`);
+  }
   </script>
 
 </body>
