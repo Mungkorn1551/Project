@@ -27,18 +27,35 @@
 </head>
 <body>
   <h2>📋 รายการคำร้อง - ไฟฟ้า</h2>
+  <div style="text-align:center; margin-bottom: 20px;">
+  <input type="text" id="searchInput" placeholder="🔎 ค้นหาชื่อ..." oninput="filterByName()" style="
+    padding: 10px;
+    width: 300px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  " />
+</div>
+
   <table>
     <thead>
       <tr><th>ชื่อ</th><th>เบอร์</th><th>ข้อความ</th><th>ไฟล์</th><th>แผนก</th><th>สถานะ</th><th>แผนที่</th></tr>
     </thead>
     <tbody id="data-body"></tbody>
   </table>
+  
   <script>
+    let allElectricData = []; // ✅ ใช้สำหรับเก็บข้อมูลที่โหลดมาทั้งหมด
     async function loadData() {
       const res = await fetch('/data-electric-all?_=' + Date.now());
       const data = await res.json();
+      allElectricData = data;
+      renderTable(data);
+    }
+    function renderTable(data) {
       const tbody = document.getElementById('data-body');
       tbody.innerHTML = '';
+      
       data.forEach(row => {
         let files = [];
         try { files = row.photo ? JSON.parse(row.photo) : []; } catch (e) { console.error('JSON parse error', e); }
@@ -103,6 +120,14 @@
     }
   </script>
   <script>
+  function filterByName() {
+    const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+    const filtered = allElectricData.filter(row =>
+      (row.name && row.name.toLowerCase().includes(keyword)) ||
+      (row.phone && row.phone.toLowerCase().includes(keyword))
+    );
+    renderTable(filtered);
+  }
   function showImages(images) {
     const html = images.map(img => {
       const url = typeof img === 'string' ? img : img.url;

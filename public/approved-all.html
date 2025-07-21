@@ -107,7 +107,15 @@
 <body>
   <a class="back-btn" href="/admin">🔙 กลับหน้าหลัก</a>
   <h2>✅ รายการคำร้องที่อนุมัติแล้ว</h2>
-
+  <div style="text-align:center; margin-bottom: 20px;">
+  <input type="text" id="searchInput" placeholder="🔎 ค้นหาชื่อ..." oninput="filterByName()" style="
+    padding: 10px;
+    width: 300px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+  " />
+</div>
   <div class="button-group">
     <button class="dept-btn" onclick="loadByDept('สำนักงานปลัด', this)">🏢 สำนักงานปลัด</button>
     <button class="dept-btn" onclick="loadByDept('สาธารณสุข', this)">🏥 สาธารณสุข</button>
@@ -119,17 +127,25 @@
   <div id="table-container"></div>
 
   <script>
-    async function loadByDept(dept, btn) {
-      // เปลี่ยนปุ่ม active
-      document.querySelectorAll('.dept-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+   let allApprovedData = [];
+    let currentDept = null;
 
-      const res = await fetch('/data-approved-all');
-      const data = await res.json();
+  async function loadByDept(dept, btn) {
+    document.querySelectorAll('.dept-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentDept = dept;
 
-      const filtered = data.filter(d => d.department === dept);
-      const container = document.getElementById('table-container');
-      container.innerHTML = '';
+    const res = await fetch('/data-approved-all');
+    const data = await res.json();
+    allApprovedData = data;
+
+    const filtered = data.filter(d => d.department === dept);
+    renderTable(filtered);
+  }
+
+  function renderTable(data) {
+    const container = document.getElementById('table-container');
+    container.innerHTML = '';
 
       const table = document.createElement('table');
       table.innerHTML = `
@@ -144,7 +160,8 @@
           </tr>
         </thead>
         <tbody>
-          ${filtered.map(row => {
+          ${data.map(row => {
+
             let files = [];
             try {
               files = row.photo ? JSON.parse(row.photo) : [];
@@ -205,6 +222,22 @@
     }
   </script>
   <script>
+  function filterByName() {
+  const keyword = document.getElementById('searchInput').value.trim().toLowerCase();
+
+  if (!currentDept) return;
+
+  const filtered = allApprovedData.filter(row =>
+    row.department === currentDept &&
+    (
+      (row.name && row.name.toLowerCase().includes(keyword)) ||
+      (row.phone && row.phone.toLowerCase().includes(keyword))
+    )
+  );
+
+  renderTable(filtered);
+}
+
   function showImages(images) {
     const html = images.map(img => {
       const url = typeof img === 'string' ? img : img.url;
