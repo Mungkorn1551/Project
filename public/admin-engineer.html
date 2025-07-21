@@ -12,8 +12,19 @@
     th { background: #15563b; color: white; }
     img, video { max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
     video.rotated-180 { transform: rotate(180deg); }
-    .media-container { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+    .media-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+}
     a.map-link { color: #2563eb; font-weight: bold; text-decoration: none; }
+
+.view-all-btn:hover {
+  background: #f3f3f3;
+}
+
   </style>
 </head>
 <body>
@@ -40,11 +51,21 @@
           const firstType = first.type || "";
 
           const firstElement = firstType === 'video'
-            ? `<video controls style="max-width: 100px;"><source src="${firstUrl}" type="video/mp4"></video>`
-            : `<img src="${firstUrl}" style="max-width: 100px; border-radius: 8px;" />`;
+            ? `<video controls style="width: 150px; height: auto; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);">
+                <source src="${firstUrl}" type="video/mp4">
+              </video>`
+            : `<img src="${firstUrl}" style="width: 150px; height: auto; border-radius: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.2);" />`;
 
           const buttonHtml = files.length > 1
-            ? `<br><button onclick='showImages(${JSON.stringify(files)})'>ดูทั้งหมด</button>`
+            ? `<button style="
+                  margin-top: 10px;
+                  padding: 6px 12px;
+                  border: 1px solid #999;
+                  border-radius: 6px;
+                  background: white;
+                  font-weight: bold;
+                  cursor: pointer;
+              " onclick='showImages(${JSON.stringify(files)})'>ดูทั้งหมด</button>`
             : "";
 
           fileLinks = `<div class="media-container">${firstElement}${buttonHtml}</div>`;
@@ -80,16 +101,40 @@
     const html = images.map(img => {
       const url = typeof img === 'string' ? img : img.url;
       const type = img.type || "";
-
       if (type === 'video' || url.toLowerCase().match(/\.(mp4|mov|avi)(\?|$)/)) {
-        return `<video controls style="max-width:100%; margin-bottom:10px;"><source src="${url}" type="video/mp4"></video>`;
-      }
-      return `<img src="${url}" style="max-width:100%; margin-bottom:10px; border-radius: 8px;" />`;
-    }).join('');
+              return `
+                <video controls style="
+                  width: auto;
+                  max-width: 700px;
+                  max-height: 500px;
+                  margin-bottom: 20px;
+                  border-radius: 8px;
+                  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+                ">
+                  <source src="${url}" type="video/mp4">
+                </video>`;
+            }
 
-    const win = window.open('', '_blank', 'width=800,height=600');
-    win.document.write(`<body style="font-family:kanit;padding:20px">${html}</body>`);
-  }
+            return `
+              <img src="${url}" style="
+                width: auto;
+                max-width: 700px;
+                max-height: 500px;
+                margin-bottom: 20px;
+                border-radius: 8px;
+                object-fit: contain;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+              " />`;
+          }).join('');
+
+          const win = window.open('', '_blank', 'width=800,height=600');
+          win.document.write(`
+            <body style="font-family:kanit; padding:30px; text-align:center; background:#f9f9f9">
+              ${html}
+            </body>
+          `);
+        }
+
   </script>
   <script>
     function setStatus(id, status) {
