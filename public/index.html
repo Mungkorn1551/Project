@@ -126,7 +126,14 @@
             <textarea name="message" rows="5" required></textarea>
 
             <label>แนบรูปภาพหรือวิดีโอ (หลายไฟล์ได้):</label>
-            <input type="file" name="mediaFiles" accept="image/*,video/*" multiple>
+            <input
+                type="file"
+                name="mediaFiles[]"
+                accept="image/*,video/*"
+                multiple
+                capture="environment"
+            />
+
 
 
 
